@@ -1,6 +1,7 @@
 <html>
 <head>
   <title>Guest Book</title>
+  <link rel="stylesheet" href="css/guest-book-style.css">
 </head>
 <body>
   <main>
@@ -8,13 +9,13 @@
       <h1>Leave Comment</h1>
     </header>
     <div class="content">
-      <div class="comment-form">
-        <form action="/register-comment" method="GET">
-          <div>
+      <div>
+        <form class="comment-form" action="/register-comment" method="GET">
+          <div class="input-wrapper">
             <label for="name">Name</label>
             <input type="text" name="name" />
           </div>
-          <div>
+          <div class="input-wrapper">
             <label for="comment">Comment</label>
             <textarea name="comment"></textarea>
           </div>
@@ -33,7 +34,6 @@
           </thead>
           <tbody>
             <td>
-
               __COMMENT_ROWS__
             </td>
           </tbody>
