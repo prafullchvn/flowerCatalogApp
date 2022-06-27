@@ -17,34 +17,4 @@ header {
 
 header>h1 {
   color: orange;
-  text-align: right;
-}
-
-.landing-page {
-  display: flex;
-  align-items: center;
-}
-
-.home-page-image {
-  width: 70%;
-  padding: 10px;
-}
-
-.home-page-image>img {
-  width: 100%;
-}
-
-.content {
-  display: flex;
-  flex-direction: column;
-  align-content: space-between;
-  height: 100%;
-}
-
-.index {
-  padding: 20px;
-}
-
-.content>* {
-  font-size: 20px;
 }
