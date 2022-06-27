@@ -4,7 +4,7 @@ const {
   abelioFlower,
   ageratumFlower
 } = require('../handler/pagesHandler.js');
-const { guestBook, registerComment } = require('../handler/commentHandler.js');
+const { guestBook, registerComment, validate } = require('../handler/commentHandler.js');
 const { Router } = require('./router.js');
 
 const setRoutes = () => {
@@ -18,7 +18,7 @@ const setRoutes = () => {
   router.get('/abelio', abelioFlower);
   router.get('/ageratum', ageratumFlower);
   router.get('/guestbook', guestBook);
-  router.get('/register-comment', registerComment);
+  router.get('/register-comment', validate, registerComment);
 
   return router;
 };

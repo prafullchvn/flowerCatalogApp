@@ -21,26 +21,38 @@ const getTimestamp = () => {
   return `${date} ${hours}:${minutes}:${seconds}`;
 }
 
-const registerComment = (req, res) => {
+const validate = (req, res, next) => {
   const { name, comment } = req.queryParams;
 
-  const timestamp = getTimestamp();
-  if (!name && !comment) {
+  if (!name.trim() && !comment.trim()) {
     res.statusCode = 400;
     res.send('Bad comment');
     return;
   }
+
+  req.queryParams = { name: name.trim(), comment: comment.trim() };
+  next();
+}
+
+const formatComment = (comment) => comment.replace('+', ' ');
+
+const registerComment = (req, res) => {
+  const timestamp = getTimestamp();
+  const { name, comment: rawComment } = req.queryParams;
+  const comment = formatComment(rawComment);
 
   if (!addComment({ name, timestamp, comment })) {
     res.statusCode = 500;
     res.send('Can not process the request');
     return;
   }
+
   res.sendHTML('<h1> Comment Added successfully.</h1>');
 }
 
 const guestBook = (req, res) => {
   const fileName = `${req.rootDir}/guestBook.html`;
+
   fs.readFile(fileName, 'utf8', (err, content) => {
     const comments = getAllComment();
     const commentHtml = comments.map(createRow).join('');
@@ -50,6 +62,7 @@ const guestBook = (req, res) => {
 };
 
 module.exports = {
+  validate,
   guestBook,
   registerComment
 };
