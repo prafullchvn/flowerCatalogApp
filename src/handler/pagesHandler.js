@@ -1,7 +1,5 @@
 const fs = require('fs');
 
-const { getAllComments, getAllComment, addComment } = require('../model/comment.js');
-
 const index = (req, res) => {
   const fileName = `${req.rootDir}/index.html`;
   fs.readFile(fileName, (err, content) => {

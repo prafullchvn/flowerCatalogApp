@@ -30,3 +30,7 @@ header>h1 {
 .content>* {
   font-size: 20px;
 }
+
+.index a {
+  text-decoration: none;
+}

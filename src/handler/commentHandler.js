@@ -1,3 +1,5 @@
+const fs = require('fs');
+const { getAllComment, addComment } = require('../model/comment.js');
 
 const createRow = ({ timestamp, name, comment }) => {
   return [
@@ -41,7 +43,7 @@ const guestBook = (req, res) => {
   const fileName = `${req.rootDir}/guestBook.html`;
   fs.readFile(fileName, 'utf8', (err, content) => {
     const comments = getAllComment();
-    const commentHtml = comments.map(createRow);
+    const commentHtml = comments.map(createRow).join('');
 
     res.sendHTML(content.replace('__COMMENT_ROWS__', commentHtml));
   });

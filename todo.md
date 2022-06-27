@@ -1,10 +1,10 @@
 # todo
 
-- [ ] Style the guest book.
 - [ ] Create the render method to render the html with content, errors, and success message
 
 # done
 
+- [x] Style the guest book.
 - [x] Separate landing page specific CSS in separate file from style.css
 - [x] Style the CSS of flower page.
 - [x] Create css file for flower page.
