@@ -1,5 +1,5 @@
 const { notFound, fileHandler } = require('../handler/defaultHandler.js');
-const { index, abelioFlower, ageratumFlower, guestBook } = require('../handler/pagesHandler.js');
+const { index, abelioFlower, ageratumFlower, guestBook, registerComment } = require('../handler/pagesHandler.js');
 const { Router } = require('./router.js');
 
 const setRoutes = () => {
@@ -13,6 +13,7 @@ const setRoutes = () => {
   router.get('/abelio', abelioFlower);
   router.get('/ageratum', ageratumFlower);
   router.get('/guestbook', guestBook);
+  router.get('/register-comment', registerComment);
 
 
   return router;

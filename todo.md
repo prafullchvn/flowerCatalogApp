@@ -1,6 +1,6 @@
 # todo
 
-- [ ] Create dummy json file inside directory called resource.
+- [x] Create dummy json file inside directory called resource.
 - [ ] Create model directory and create file comment model inside of it.
 - [ ] Fetch all comments from the json using model and display them.
 
