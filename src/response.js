@@ -64,7 +64,6 @@ class Response {
     this.#printHeaders();
     this.#write(EOL);
     this.#write(data);
-    // this.#end();
   }
 
   send(data) {
