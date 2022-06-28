@@ -1,14 +1,13 @@
 # todo
 
-- [ ] Make a function toLocalString() for timestamp.
-- [ ] Redirect to the guestbook after adding request.
-- [ ] Make handler to show error on guestbook itself.
 - [ ] Consider making GuestBook entity.
 - [ ] Add content-type of reading file.
-- [ ] Create the render method to render the html with content, errors, and success message.
 
 # done
 
+- [x] Create the render method to render the html with content, errors, and success message.
+- [x] Make a function toLocalString() for timestamp.
+- [x] Make handler to show error on guestbook itself.
 - [x] Style the guest book.
 - [x] Separate landing page specific CSS in separate file from style.css
 - [x] Style the CSS of flower page.
