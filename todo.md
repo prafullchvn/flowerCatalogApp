@@ -1,7 +1,11 @@
 # todo
 
+- [ ] Initialize with npm.
+- [ ] Abstract the server entity.
 - [ ] Consider making GuestBook entity.
 - [ ] Add content-type of reading file.
+  - [ ] Use mime package to determine the file type.
+- [ ] Move flower catalog to resource/view directory.
 
 # done
 
