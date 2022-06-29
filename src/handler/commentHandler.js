@@ -11,43 +11,41 @@ const createRow = ({ timestamp, name, comment }) => {
   ].join('');
 };
 
-const validate = (req, res, next) => {
-  const { name, comment } = req.queryParams;
-  const fileName = `${req.rootDir}/guestBook.html`;
-
-  console.log('error');
-
-  if (!name.trim() && !comment.trim()) {
-    const error = 'Please provide the valid name and comment.';
-    render(fileName, '', error, (html) => res.sendHTML(html));
-
-    return;
-  }
-
-  req.queryParams = { name: name.trim(), comment: comment.trim() };
-  next();
-}
-
 const decodeParam = (rawParam) => {
   let decodedParam = rawParam.replaceAll('+', ' ');
   return decodeURIComponent(decodedParam);
 };
 
-const registerComment = (req, res) => {
-  const { name: rawName, comment: rawComment } = req.queryParams;
+const validate = (req, res, next) => {
+  const name = req.url.searchParams.get('name');
+  const comment = req.url.searchParams.get('comment');
+  const fileName = `${req.rootDir}/guestBook.html`;
 
-  const name = decodeParam(rawName);
-  const comment = decodeParam(rawComment);
+  if (!name.trim() && !comment.trim()) {
+    const error = 'Please provide the valid name and comment.';
+    render(fileName, '', error, (html) => {
+      res.setHeader('content-type', 'text/html');
+      res.end(html)
+    });
+    return;
+  }
+
+  next();
+}
+
+const registerComment = (req, res) => {
+  const name = req.url.searchParams.get('name');
+  const comment = req.url.searchParams.get('comment');
   const timestamp = new Date().toLocaleString();
 
   if (!addComment({ name, timestamp, comment })) {
     res.statusCode = 500;
     res.send('Can not process the request');
-    res.redirect('/guestbook');
-    return;
   }
 
-  res.redirect('/guestbook');
+  res.statusCode = 302;
+  res.setHeader('location', '/guestbook');
+  res.end();
 }
 
 const render = (fileName, message, error, callback) => {
@@ -66,10 +64,13 @@ const render = (fileName, message, error, callback) => {
 const guestBook = (req, res) => {
   const fileName = `${req.rootDir}/guestBook.html`;
 
-  const message = req.queryParams.message || '';
-  const error = req.queryParams.error || '';
+  const message = req.url.searchParams.get('message') || '';
+  const error = req.url.searchParams.get('error') || '';
 
-  render(fileName, message, error, (html) => res.sendHTML(html));
+  render(fileName, message, error, (html) => {
+    res.setHeader('content-type', 'text/html');
+    res.end(html)
+  });
 };
 
 module.exports = {
