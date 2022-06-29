@@ -1,6 +1,5 @@
 # todo
 
-- [ ] Initialize with npm.
 - [ ] Abstract the server entity.
 - [ ] Consider making GuestBook entity.
 - [ ] Add content-type of reading file.
@@ -9,6 +8,7 @@
 
 # done
 
+- [x] Initialize with npm.
 - [x] Create the render method to render the html with content, errors, and success message.
 - [x] Make a function toLocalString() for timestamp.
 - [x] Make handler to show error on guestbook itself.

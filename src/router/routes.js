@@ -5,7 +5,7 @@ const {
   ageratumFlower
 } = require('../handler/pagesHandler.js');
 const { guestBook, registerComment, validate } = require('../handler/commentHandler.js');
-const { Router } = require('./router.js');
+const { Router } = require('server');
 
 const setRoutes = () => {
   const router = new Router();
