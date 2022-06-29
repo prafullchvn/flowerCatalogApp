@@ -1,5 +1,10 @@
 # todo
 
+- [ ] Add timestamp to request using middleware.
+- [ ] Add content-type to response using middleware.
+- [ ] Pass configuration as parameter to handlers.
+  - [ ] Use template path from configuration.
+  - [ ] Use Json file path of comments from configuration.
 - [ ] Consider making GuestBook entity.
 - [ ] Move flower catalog to resource/view directory.
 
