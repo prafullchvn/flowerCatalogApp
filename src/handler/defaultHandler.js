@@ -1,7 +1,7 @@
 const path = require('path');
 const fs = require('fs');
 
-const notFound = (request, response) => {
+const notFound = (request, response, next) => {
   response.statusCode = 404;
   response.end('Not Found');
 };

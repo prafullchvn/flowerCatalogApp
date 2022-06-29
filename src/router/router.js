@@ -1,34 +1,25 @@
-const { Iterator } = require('./iterator.js');
+const { Route, executeHandlers } = require('./route.js');
 
 class Router {
   #routes;
   #defaultHandlers;
   #middleware;
   constructor() {
-    this.#routes = {
-      get: {},
-      post: {}
-    };
+    this.#routes = {};
     this.#middleware = [];
     this.#defaultHandlers = [];
   }
 
-  get(route, ...handler) {
-    const list = this.#routes.get[route] || [];
-    list.push(...handler);
-    this.#routes.get[route] = list;
+  get(path, ...handler) {
+    const route = this.#routes[path] || new Route();
+    route.addHandler('GET', ...handler);
+    this.#routes[path] = route;
   }
 
-  post(route, ...handler) {
-    const list = this.#routes.post[route] || [];
-    list.push(...handler);
-    this.#routes.post[route] = list;
-  }
-
-  addRoute(route, ...handler) {
-    const list = this.#routes[route] || [];
-    list.push(...handler);
-    this.#routes[route] = list;
+  post(path, ...handler) {
+    const route = this.#routes[path] || new Route();
+    route.addHandler('POST', ...handler);
+    this.#routes[path] = route;
   }
 
   addDefaultHandler(handler) {
@@ -45,19 +36,16 @@ class Router {
 
   routeTo(request, response) {
     const { pathname } = request.url;
-    const method = request.method;
-    const handlers = this.#routes[method.toLowerCase()][pathname];
+    const route = this.#routes[pathname];
 
     this.#runMiddlewares(request, response);
 
-    if (handlers) {
-      const itr = new Iterator(handlers, request, response);
-      itr.next();
+    if (route) {
+      route.routeTo(request, response);
       return;
     }
 
-    const itr = new Iterator(this.#defaultHandlers, request, response);
-    itr.next();
+    executeHandlers(this.#defaultHandlers, request, response);
   }
 }
 
