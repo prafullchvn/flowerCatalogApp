@@ -40,7 +40,8 @@ const registerComment = (req, res) => {
 
   if (!addComment({ name, timestamp, comment })) {
     res.statusCode = 500;
-    res.send('Can not process the request');
+    res.end('Can not process the request');
+    return;
   }
 
   res.statusCode = 302;

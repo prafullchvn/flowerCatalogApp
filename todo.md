@@ -1,13 +1,13 @@
 # todo
 
-- [ ] Abstract the server entity.
 - [ ] Consider making GuestBook entity.
-- [ ] Add content-type of reading file.
-  - [ ] Use mime package to determine the file type.
 - [ ] Move flower catalog to resource/view directory.
 
 # done
 
+- [x] Add content-type of reading file.
+  - [ ] ~~Use mime package to determine the file type.~~
+- [ ] ~~Abstract the server entity.~~
 - [x] Initialize with npm.
 - [x] Create the render method to render the html with content, errors, and success message.
 - [x] Make a function toLocalString() for timestamp.
