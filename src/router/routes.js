@@ -1,4 +1,4 @@
-const { Router } = require('./router');
+const { Router } = require('server-using-http-module');
 
 const { notFound, fileHandler } = require('../handler/defaultHandler.js');
 const { index, abelioFlower, ageratumFlower } = require('../handler/pagesHandler.js');
@@ -6,8 +6,6 @@ const { guestBook, registerComment, validate } = require('../handler/commentHand
 
 const setRoutes = () => {
   const router = new Router();
-
-  // router.addMiddleware()
 
   router.addDefaultHandler(fileHandler);
   router.addDefaultHandler(notFound);

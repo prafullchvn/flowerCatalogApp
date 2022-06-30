@@ -22,6 +22,7 @@
   "homepage": "https://github.com/prafullchvn/flowerCatalogApp#readme",
   "dependencies": {
     "mime-types": "^2.1.35",
-    "server": "github:prafullchvn/server"
+    "server": "github:prafullchvn/server",
+    "server-using-http-module": "github:prafullchvn/server-using-http-module"
   }
 }
