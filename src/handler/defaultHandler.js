@@ -1,5 +1,6 @@
 const path = require('path');
 const fs = require('fs');
+const mime = require('mime-types');
 
 const notFound = (request, response, next) => {
   response.statusCode = 404;
@@ -12,7 +13,8 @@ const determineFileType = (extension) => {
     '.jpg': 'image/jpeg',
     '.txt': 'text/plain',
     '.pdf': 'application/pdf',
-    '.css': 'text/css'
+    '.css': 'text/css',
+    '.mp3': ''
   };
 
   return types[extension];
@@ -20,20 +22,22 @@ const determineFileType = (extension) => {
 
 const fileHandler = (request, response, next) => {
   const { pathname } = request.url;
-  const fileName = './public' + pathname;
+  const filePath = './public' + pathname;
 
   if (pathname === '/') {
     next();
     return;
   }
 
-  if (fs.existsSync(fileName)) {
-    const fileType = determineFileType(path.extname(fileName));
-    response.setHeader('content-type', fileType);
+  if (fs.existsSync(filePath)) {
+    const fileType = mime.lookup(filePath);
 
-    fs.readFile(fileName, (err, content) => {
-      response.end(content);
-    });
+    response.setHeader('content-type', fileType);
+    response.setHeader('transfer-encoding', 'chunked');
+
+    const readStream = fs.createReadStream(filePath);
+    readStream.pipe(response);
+    readStream.on('end', () => response.end());
     return;
   }
 

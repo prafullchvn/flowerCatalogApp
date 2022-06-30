@@ -1,2 +1,5 @@
 comments.json
 node_modules
+/public/song
+/public/videos
+/public/.DS_Store

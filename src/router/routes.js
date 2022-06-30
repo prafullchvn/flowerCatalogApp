@@ -7,6 +7,8 @@ const { guestBook, registerComment, validate } = require('../handler/commentHand
 const setRoutes = () => {
   const router = new Router();
 
+  // router.addMiddleware()
+
   router.addDefaultHandler(fileHandler);
   router.addDefaultHandler(notFound);
 
