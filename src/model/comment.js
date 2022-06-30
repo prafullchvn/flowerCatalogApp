@@ -2,16 +2,16 @@ const fs = require('fs');
 
 const COMMENT_FILE = './src/resource/comments.json';
 
-const getAllComment = () => {
-  const rawComments = fs.readFileSync(COMMENT_FILE, 'utf8');
+const getAllComment = (dbFile) => {
+  const rawComments = fs.readFileSync(dbFile, 'utf8');
   return JSON.parse(rawComments)
 }
 
-const addComment = ({ timestamp, name, comment }) => {
-  const comments = getAllComment();
+const addComment = (dbFile, { timestamp, name, comment }) => {
+  const comments = getAllComment(dbFile);
   comments.unshift({ timestamp, name, comment });
   try {
-    fs.writeFileSync(COMMENT_FILE, JSON.stringify(comments), 'utf8');
+    fs.writeFileSync(dbFile, JSON.stringify(comments), 'utf8');
   } catch (err) {
     return false;
   }

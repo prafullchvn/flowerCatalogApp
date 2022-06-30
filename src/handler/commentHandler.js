@@ -19,26 +19,23 @@ const decodeParam = (rawParam) => {
 const validate = (req, res, next) => {
   const name = req.url.searchParams.get('name');
   const comment = req.url.searchParams.get('comment');
-  const fileName = `${req.rootDir}/guestBook.html`;
 
   if (!name.trim() && !comment.trim()) {
-    const error = 'Please provide the valid name and comment.';
-    render(fileName, '', error, (html) => {
-      res.setHeader('content-type', 'text/html');
-      res.end(html)
-    });
+    res.statusCode = 302;
+    res.setHeader('location', '/guestbook');
+    res.end()
     return;
   }
 
   next();
 }
 
-const registerComment = (req, res) => {
+const createCommentAdder = ({ dbFile }) => (req, res) => {
   const name = req.url.searchParams.get('name');
   const comment = req.url.searchParams.get('comment');
   const timestamp = new Date().toLocaleString();
 
-  if (!addComment({ name, timestamp, comment })) {
+  if (!addComment(dbFile, { name, timestamp, comment })) {
     res.statusCode = 500;
     res.end('Can not process the request');
     return;
@@ -49,26 +46,27 @@ const registerComment = (req, res) => {
   res.end();
 }
 
-const render = (fileName, message, error, callback) => {
+const render = (fileName, { message, error, commentRows }, callback) => {
   fs.readFile(fileName, 'utf8', (err, content) => {
-    const comments = getAllComment();
-    const commentHtml = comments.map(createRow).join('');
 
-    let html = content.replace('__COMMENT_ROWS__', commentHtml);
-    html = html.replace('__ERROR__', decodeParam(error));
-    html = html.replace('__MESSAGE__', decodeParam(message));
+    let html = content.replace('@commentRows', commentRows);
+    html = html.replace('@error', decodeParam(error));
+    html = html.replace('@message', decodeParam(message));
 
     callback(html);
   });
 };
 
-const guestBook = (req, res) => {
-  const fileName = `${req.rootDir}/guestBook.html`;
-
+const showGuestBook = ({ template, dbFile }) => (req, res) => {
+  const fileName = template;
+  console.log('printing data something');
   const message = req.url.searchParams.get('message') || '';
   const error = req.url.searchParams.get('error') || '';
 
-  render(fileName, message, error, (html) => {
+  const comments = getAllComment(dbFile);
+  const commentRows = comments.map(createRow).join('');
+
+  render(fileName, { message, error, commentRows }, (html) => {
     res.setHeader('content-type', 'text/html');
     res.end(html)
   });
@@ -76,6 +74,6 @@ const guestBook = (req, res) => {
 
 module.exports = {
   validate,
-  guestBook,
-  registerComment
+  showGuestBook,
+  createCommentAdder
 };

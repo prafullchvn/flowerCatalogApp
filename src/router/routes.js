@@ -1,10 +1,14 @@
 const { Router } = require('server-using-http-module');
 
 const { notFound, fileHandler } = require('../handler/defaultHandler.js');
-const { index, abelioFlower, ageratumFlower } = require('../handler/pagesHandler.js');
-const { guestBook, registerComment, validate } = require('../handler/commentHandler.js');
 
-const setRoutes = () => {
+const pagesHandler = require('../handler/pagesHandler.js');
+const { index, abelioFlower, ageratumFlower } = pagesHandler;
+
+const commentHandler = require('../handler/commentHandler.js');
+const { showGuestBook, createCommentAdder, validate } = commentHandler;
+
+const setRoutes = (config) => {
   const router = new Router();
 
   router.addDefaultHandler(fileHandler);
@@ -14,10 +18,10 @@ const setRoutes = () => {
   router.get('/index', index);
   router.get('/abelio', abelioFlower);
   router.get('/ageratum', ageratumFlower);
-  router.get('/guestbook', guestBook);
-  router.get('/register-comment', validate, registerComment);
+  router.get('/guestbook', showGuestBook(config));
+  router.get('/register-comment', validate, createCommentAdder(config));
 
   return router;
 };
 
-module.exports = { router: setRoutes() };
+module.exports = { setRoutes };
