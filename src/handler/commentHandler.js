@@ -33,7 +33,7 @@ const validate = (req, res, next) => {
 const createCommentAdder = ({ dbFile }) => (req, res) => {
   const name = req.url.searchParams.get('name');
   const comment = req.url.searchParams.get('comment');
-  const timestamp = new Date().toLocaleString();
+  const timestamp = req.timestamp;
 
   if (!addComment(dbFile, { name, timestamp, comment })) {
     res.statusCode = 500;

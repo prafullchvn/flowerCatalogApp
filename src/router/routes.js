@@ -8,11 +8,16 @@ const { index, abelioFlower, ageratumFlower } = pagesHandler;
 const commentHandler = require('../handler/commentHandler.js');
 const { showGuestBook, createCommentAdder, validate } = commentHandler;
 
+const { addTimestamp } = require('../middleware/addTimestamp.js');
+
 const setRoutes = (config) => {
   const router = new Router();
 
   router.addDefaultHandler(fileHandler);
   router.addDefaultHandler(notFound);
+
+  router.addMiddleware(addTimestamp);
+  router.addMiddleware(addTimestamp);
 
   router.get('/', index);
   router.get('/index', index);

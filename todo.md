@@ -1,15 +1,19 @@
 # todo
 
-- [ ] Add timestamp to request using middleware.
-- [ ] Add content-type to response using middleware.
-- [ ] Pass configuration as parameter to handlers.
-  - [ ] Use template path from configuration.
-  - [ ] Use Json file path of comments from configuration.
 - [ ] Consider making GuestBook entity.
-- [ ] Move flower catalog to resource/view directory.
+- [ ] Create entity called CommentHandler.
+- [ ] Register comment using post.
+ - [ ] Change method in html to post.
+ - [ ] Add middleware to parse parameter if the request is post.
 
 # done
 
+- [x] ~~Add content-type to response using middleware.~~
+- [x] Move flower catalog to resource/view directory.
+- [x] Add timestamp to request using middleware.
+- [x] Pass configuration as parameter to handlers.
+  - [x] Use template path from configuration.
+  - [x] Use Json file path of comments from configuration.
 - [x] Add content-type of reading file.
   - [ ] ~~Use mime package to determine the file type.~~
 - [ ] ~~Abstract the server entity.~~
