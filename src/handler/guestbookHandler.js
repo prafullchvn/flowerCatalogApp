@@ -24,12 +24,15 @@ const validate = (req, res, next) => {
   next();
 }
 
-const render = (fileName, { message, error, commentRows }, callback) => {
-  fs.readFile(fileName, 'utf8', (err, content) => {
+const render = (template, dataToBeRendered, callback) => {
+  fs.readFile(template, 'utf8', (err, content) => {
 
-    let html = content.replace('@commentRows', commentRows);
-    html = html.replace('@error', error);
-    html = html.replace('@message', message);
+    const html = Object.entries(dataToBeRendered).reduce(
+      (renderedHtml, [field, value]) => {
+        const placeholder = '@' + field;
+
+        return renderedHtml.replace(placeholder, value);
+      }, content);
 
     callback(html);
   });
