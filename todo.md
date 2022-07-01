@@ -1,13 +1,17 @@
 # todo
 
-- [ ] Add middleware to parse the get data.
-- [ ] Register comment using post.
- - [ ] Change method in html to post.
- - [ ] Add middleware to parse parameter if the request is post.
+- [ ] create method for 302 (redirect), 405 (bad request), 404 (not found) and 500 (can not process)
 - [ ] Make render method generic.
+- [ ] Make properties in CommentHandler and Comment private.
+- [ ] Create the separate file for render method.
+- [ ] Create separate file 'commentUtil' for helper method to Comment Handler. 
 
 # done
 
+- [x] Add middleware to parse the get data.
+- [x] Register comment using post.
+ - [x] Change method in html to post.
+ - [x] Add middleware to parse parameter if the request is post.
 - [x] Consider making GuestBook entity.
 - [x] Create entity called CommentHandler.
 - [x] ~~Add content-type to response using middleware.~~

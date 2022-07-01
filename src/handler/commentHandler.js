@@ -12,8 +12,7 @@ const createRow = ({ timestamp, name, comment }) => {
 };
 
 const validate = (req, res, next) => {
-  const name = req.url.searchParams.get('name');
-  const comment = req.url.searchParams.get('comment');
+  const { name, comment } = req.bodyParams;
 
   if (!name.trim() && !comment.trim()) {
     res.statusCode = 302;
@@ -69,10 +68,7 @@ class CommentHandler {
   }
 
   registerComment(req, res) {
-    const name = req.url.searchParams.get('name');
-    const comment = req.url.searchParams.get('comment');
-    const timestamp = req.timestamp;
-
+    const { timestamp, bodyParams: { name, comment } } = req;
     this.guestbook.load(guestBookLoader(this.dbFile));
 
     if (!this.guestbook.addComment({ name, timestamp, comment })) {
@@ -91,6 +87,5 @@ class CommentHandler {
 
 module.exports = {
   validate,
-  // createCommentAdder,
   CommentHandler
 };
