@@ -6,9 +6,10 @@ const pagesHandler = require('../handler/pagesHandler.js');
 const { index, abelioFlower, ageratumFlower } = pagesHandler;
 
 const commentHandler = require('../handler/commentHandler.js');
-const { showGuestBook, createCommentAdder, validate } = commentHandler;
+const { CommentHandler, createCommentAdder, validate } = commentHandler;
 
 const { addTimestamp } = require('../middleware/addTimestamp.js');
+const { GuestBook } = require('../model/comment.js');
 
 const setRoutes = (config) => {
   const router = new Router();
@@ -23,8 +24,18 @@ const setRoutes = (config) => {
   router.get('/index', index);
   router.get('/abelio', abelioFlower);
   router.get('/ageratum', ageratumFlower);
-  router.get('/guestbook', showGuestBook(config));
-  router.get('/register-comment', validate, createCommentAdder(config));
+
+
+  const { template, dbFile } = config;
+  const guestbook = new GuestBook();
+  const commentHandler = new CommentHandler(guestbook, template, dbFile);
+
+  router.get('/guestbook', (req, res) => commentHandler.index(req, res));
+  router.get(
+    '/register-comment',
+    validate,
+    (req, res) => commentHandler.registerComment(req, res)
+  );
 
   return router;
 };

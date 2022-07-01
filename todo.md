@@ -1,13 +1,15 @@
 # todo
 
-- [ ] Consider making GuestBook entity.
-- [ ] Create entity called CommentHandler.
+- [ ] Add middleware to parse the get data.
 - [ ] Register comment using post.
  - [ ] Change method in html to post.
  - [ ] Add middleware to parse parameter if the request is post.
+- [ ] Make render method generic.
 
 # done
 
+- [x] Consider making GuestBook entity.
+- [x] Create entity called CommentHandler.
 - [x] ~~Add content-type to response using middleware.~~
 - [x] Move flower catalog to resource/view directory.
 - [x] Add timestamp to request using middleware.

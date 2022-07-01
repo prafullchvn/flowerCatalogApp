@@ -2,20 +2,29 @@ const fs = require('fs');
 
 const COMMENT_FILE = './src/resource/comments.json';
 
-const getAllComment = (dbFile) => {
-  const rawComments = fs.readFileSync(dbFile, 'utf8');
-  return JSON.parse(rawComments)
-}
-
-const addComment = (dbFile, { timestamp, name, comment }) => {
-  const comments = getAllComment(dbFile);
-  comments.unshift({ timestamp, name, comment });
-  try {
-    fs.writeFileSync(dbFile, JSON.stringify(comments), 'utf8');
-  } catch (err) {
-    return false;
+class GuestBook {
+  constructor() {
+    this.comments = [];
   }
-  return true;
+
+  load(loader) {
+    this.comments = loader();
+  }
+
+  save(saver) {
+    saver(JSON.stringify(this.comments));
+  }
+
+  getAllComment() {
+    return this.comments;
+  }
+
+  addComment({ timestamp, name, comment }) {
+    const comments = this.getAllComment(this.dbFile);
+    this.comments.unshift({ timestamp, name, comment });
+
+    return true;
+  }
 }
 
-module.exports = { getAllComment, addComment };
+module.exports = { GuestBook };
