@@ -45,7 +45,7 @@ const guestbookSaver = (dbFile) => (guestbook) => {
   fs.writeFileSync(dbFile, guestbook, 'utf8');
 };
 
-class CommentHandler {
+class GuestbookHandler {
   #guestbook;
   #template;
   #dbFile;
@@ -84,5 +84,5 @@ class CommentHandler {
 
 module.exports = {
   validate,
-  CommentHandler
+  GuestbookHandler
 };
