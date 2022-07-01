@@ -1,23 +1,9 @@
-const path = require('path');
 const fs = require('fs');
 const mime = require('mime-types');
 
-const notFound = (request, response, next) => {
+const notFound = (request, response) => {
   response.statusCode = 404;
   response.end('Not Found');
-};
-
-const determineFileType = (extension) => {
-  const types = {
-    '.jpeg': 'image/jpeg',
-    '.jpg': 'image/jpeg',
-    '.txt': 'text/plain',
-    '.pdf': 'application/pdf',
-    '.css': 'text/css',
-    '.mp3': ''
-  };
-
-  return types[extension];
 };
 
 const fileHandler = (request, response, next) => {

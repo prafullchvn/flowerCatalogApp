@@ -1,5 +1,7 @@
 const fs = require('fs');
-const { getAllComment, addComment } = require('../model/comment.js');
+
+const responseMessage = require('../response.js');
+const { canNotProcess, redirect, sendHTML } = responseMessage;
 
 const createRow = ({ timestamp, name, comment }) => {
   return [
@@ -15,9 +17,7 @@ const validate = (req, res, next) => {
   const { name, comment } = req.bodyParams;
 
   if (!name.trim() && !comment.trim()) {
-    res.statusCode = 302;
-    res.setHeader('location', '/guestbook');
-    res.end()
+    redirect(res, '/guestbook');
     return;
   }
 
@@ -46,41 +46,38 @@ const guestbookSaver = (dbFile) => (guestbook) => {
 };
 
 class CommentHandler {
+  #guestbook;
+  #template;
+  #dbFile;
+
   constructor(guestbook, template, dbFile) {
-    this.guestbook = guestbook;
-    this.template = template;
-    this.dbFile = dbFile;
+    this.#guestbook = guestbook;
+    this.#template = template;
+    this.#dbFile = dbFile;
   }
 
   index(req, res) {
-    const message = req.url.searchParams.get('message') || '';
-    const error = req.url.searchParams.get('error') || '';
+    this.#guestbook.load(guestBookLoader(this.#dbFile));
 
-    this.guestbook.load(guestBookLoader(this.dbFile));
-
-    const comments = this.guestbook.getAllComment();
+    const comments = this.#guestbook.getAllComment();
     const commentRows = comments.map(createRow).join('');
 
-    render(this.template, { message, error, commentRows }, (html) => {
-      res.setHeader('content-type', 'text/html');
-      res.end(html)
-    });
+    render(this.#template, { message: '', error: '', commentRows }, (html) =>
+      sendHTML(res, html)
+    );
   }
 
   registerComment(req, res) {
     const { timestamp, bodyParams: { name, comment } } = req;
-    this.guestbook.load(guestBookLoader(this.dbFile));
+    this.#guestbook.load(guestBookLoader(this.#dbFile));
 
-    if (!this.guestbook.addComment({ name, timestamp, comment })) {
-      res.statusCode = 500;
-      res.end('Can not process the request');
+    if (!this.#guestbook.addComment({ name, timestamp, comment })) {
+      canNotProcess(res);
       return;
     }
 
-    this.guestbook.save(guestbookSaver(this.dbFile));
-    res.statusCode = 302;
-    res.setHeader('location', '/guestbook');
-    res.end();
+    this.#guestbook.save(guestbookSaver(this.#dbFile));
+    redirect(res, '/guestbook');
   }
 }
 

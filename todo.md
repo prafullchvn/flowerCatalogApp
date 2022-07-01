@@ -1,13 +1,14 @@
 # todo
 
-- [ ] create method for 302 (redirect), 405 (bad request), 404 (not found) and 500 (can not process)
+- [ ] Change CommentHandler to GuestBookHandler.
 - [ ] Make render method generic.
-- [ ] Make properties in CommentHandler and Comment private.
 - [ ] Create the separate file for render method.
 - [ ] Create separate file 'commentUtil' for helper method to Comment Handler. 
 
 # done
 
+- [x] Make properties in CommentHandler and Comment private.
+- [x] create method for 302 (redirect), 405 (bad request), 404 (not found) and 500 (can not process)
 - [x] Add middleware to parse the get data.
 - [x] Register comment using post.
  - [x] Change method in html to post.

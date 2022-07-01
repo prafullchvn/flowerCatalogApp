@@ -1,27 +1,26 @@
 const fs = require('fs');
 
-const COMMENT_FILE = './src/resource/comments.json';
-
 class GuestBook {
+  #comments;
   constructor() {
-    this.comments = [];
+    this.#comments = [];
   }
 
   load(loader) {
-    this.comments = loader();
+    this.#comments = loader();
   }
 
   save(saver) {
-    saver(JSON.stringify(this.comments));
+    saver(JSON.stringify(this.#comments));
   }
 
   getAllComment() {
-    return this.comments;
+    return this.#comments;
   }
 
   addComment({ timestamp, name, comment }) {
     const comments = this.getAllComment(this.dbFile);
-    this.comments.unshift({ timestamp, name, comment });
+    this.#comments.unshift({ timestamp, name, comment });
 
     return true;
   }
