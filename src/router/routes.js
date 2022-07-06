@@ -12,6 +12,11 @@ const { addTimestamp } = require('../middleware/addTimestamp.js');
 const { GuestBook } = require('../model/comment.js');
 const { parsePostParams } = require('../middleware/paramsParser.js');
 
+//auth handler
+const { login, handleLogin, injectCookies, authenticate, logout, signup, checkAuth } = require('../handler/authHandler.js');
+
+const Session = require('../session.js');
+
 const setRoutes = (config) => {
   const router = new Router();
 
@@ -19,19 +24,34 @@ const setRoutes = (config) => {
   router.addDefaultHandler(notFound);
 
   router.addMiddleware(addTimestamp);
+  router.addMiddleware(injectCookies);
+
+  //injecting session
+  const session = new Session();
+  router.addMiddleware((req) => { req.session = session });
 
   router.get('/', index);
   router.get('/index', index);
   router.get('/abelio', abelioFlower);
   router.get('/ageratum', ageratumFlower);
 
+  router.get('/login', checkAuth, login);
+  router.post('/login', parsePostParams, handleLogin);
+  router.get('/logout', logout);
+
+  router.get('/signup', checkAuth, signup);
 
   const { template, dbFile } = config;
   const guestbook = new GuestBook();
   const commentHandler = new GuestbookHandler(guestbook, template, dbFile);
 
-  router.get('/guestbook', (req, res) => commentHandler.index(req, res));
+  router.get('/guestbook',
+    authenticate,
+    (req, res) => commentHandler.index(req, res)
+  );
+
   router.post('/register-comment',
+    authenticate,
     parsePostParams,
     validate,
     (req, res) => commentHandler.registerComment(req, res)

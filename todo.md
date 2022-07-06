@@ -1,9 +1,15 @@
 # todo
 
+- [ ] Remove name field from the form of comments.
 - [ ] Create separate file 'commentUtil' for helper method to Comment Handler. 
 
 # done
 
+- [x] Make login page and make form to send the username and password.
+- [x] Make session part of request using middleware.
+- [x] Make parser for cookies.
+- [x] Make handler to authenticate the user.
+- [x] Use handler to protect the route.
 - [x] Create the separate file for render method.
 - [x] Make render method generic.
 - [x] Change CommentHandler to GuestBookHandler.

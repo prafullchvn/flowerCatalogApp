@@ -82,5 +82,7 @@ input[type="submit"] {
 
 .message {
   text-align: center;
-  color: rgb(99, 248, 99);
+  color: black;
+  font-size: 24px;
+  font-weight: 400;
 }
