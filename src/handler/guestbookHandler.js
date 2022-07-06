@@ -3,6 +3,8 @@ const fs = require('fs');
 const responseMessage = require('../response.js');
 const { canNotProcess, redirect, sendHTML } = responseMessage;
 
+const render = require('../render.js');
+
 const createRow = ({ timestamp, name, comment }) => {
   return [
     '<tr>',
@@ -24,25 +26,9 @@ const validate = (req, res, next) => {
   next();
 }
 
-const render = (template, dataToBeRendered, callback) => {
-  fs.readFile(template, 'utf8', (err, content) => {
-
-    const html = Object.entries(dataToBeRendered).reduce(
-      (renderedHtml, [field, value]) => {
-        const placeholder = '@' + field;
-
-        return renderedHtml.replace(placeholder, value);
-      }, content);
-
-    callback(html);
-  });
-};
-
-
 const guestBookLoader = (dbFile) => () => {
   return JSON.parse(fs.readFileSync(dbFile, 'utf8'));
 }
-
 
 const guestbookSaver = (dbFile) => (guestbook) => {
   fs.writeFileSync(dbFile, guestbook, 'utf8');

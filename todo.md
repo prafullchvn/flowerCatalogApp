@@ -1,10 +1,10 @@
 # todo
 
-- [ ] Create the separate file for render method.
 - [ ] Create separate file 'commentUtil' for helper method to Comment Handler. 
 
 # done
 
+- [x] Create the separate file for render method.
 - [x] Make render method generic.
 - [x] Change CommentHandler to GuestBookHandler.
 - [x] Make properties in CommentHandler and Comment private.

@@ -40,4 +40,22 @@ const setRoutes = (config) => {
   return router;
 };
 
+// GET /flower
+// GET /anotherFlower
+
+// guestBookRouter.get('/guest-book')
+// guestBookRouter.get('/guest-book/comments')
+// guestBookRouter.post('/guest-book/comment')
+
+// router.get('/flower')
+// router.get('/anotherFlower')
+// router.all('/guest-book', guestBookRouter.bind({comments:comments}))
+// router.get('/',notFound)
+
+
+
+// GET /guest-book
+// GET /guest-book/comments
+// POST /guest-book/comment
+
 module.exports = { setRoutes };

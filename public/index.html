@@ -3,6 +3,17 @@
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/landing-page.css">
   <title>Flower Catalog</title>
+  <script>
+    window.onload = () => {
+      const waterJarImage = document.getElementById('gif');
+      waterJarImage.addEventListener('click', () => {
+        waterJarImage.style.visibility = 'hidden';
+        setTimeout(() => {
+          waterJarImage.style.visibility = 'visible';
+        }, 1000);
+      });
+    }
+  </script>
 </head>
 <body>
   <main>
@@ -21,7 +32,10 @@
           </ul>
         </div>
         <div class="guest-book">
-          <a href="/guestbook">Guest Book</a>
+          <div>
+            <img src="images/animated-flower-image-0021.gif" alt="animate-gif" id="gif" />
+          </div>
+          <a href="/guestbook" id="guest-book-link">Guest Book</a>
         </div>
       </div>
     </article>
