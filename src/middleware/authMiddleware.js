@@ -1,4 +1,4 @@
-const { redirect } = require("../response");
+const { redirect } = require("../responseMessages.js");
 
 const parseCookies = (cookiesString = '') => {
   return cookiesString.split(';').reduce((cookies, rawCookie) => {
@@ -17,7 +17,8 @@ const authenticate = (req, res, next) => {
   const { sessionId } = req.cookies;
   const session = req.session.getSession(sessionId);
 
-  if (!sessionId && !session) {
+  if (!sessionId || !session) {
+    res.setHeader('set-cookie', 'sessionId=0; max-age:0');
     redirect(res, '/login');
     return;
   }

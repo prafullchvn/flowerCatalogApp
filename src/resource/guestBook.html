@@ -7,15 +7,14 @@
     <main>
       <header>
         <h1>Leave Comment</h1>
+        <a href="/logout" id="logout-btn">Log Out</a>
       </header>
       <div class="error">@error</div>
-      <div class="message">@user</div>
       <div class="content">
         <div>
           <form class="comment-form" action="/register-comment" method="POST">
             <div class="input-wrapper">
-              <label for="name">Name</label>
-              <input type="text" name="name" />
+              <div class="username">@user</div>
             </div>
             <div class="input-wrapper">
               <label for="comment">Comment</label>

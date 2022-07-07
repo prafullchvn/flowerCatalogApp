@@ -38,7 +38,7 @@ const setRoutes = (config) => {
 
   router.get('/login', checkAuth, login);
   router.post('/login', parsePostParams, handleLogin);
-  router.get('/logout', logout);
+  router.get('/logout', authenticate, logout);
 
   router.get('/signup', checkAuth, signup);
   router.post('/signup', parsePostParams, handleSignUp);

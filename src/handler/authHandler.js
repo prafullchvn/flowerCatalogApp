@@ -1,10 +1,8 @@
 const render = require("../render");
-const { redirect } = require("../response");
+const { redirect } = require("../responseMessages.js");
 const { user } = require('../model/user.js');
 
 const login = (req, res) => {
-  console.log(req.session);
-
   render('./public/login.html', { error: '' }, (html) => {
     res.setHeader('content-type', 'text/html');
     res.end(html);

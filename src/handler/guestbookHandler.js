@@ -1,6 +1,6 @@
 const fs = require('fs');
 
-const responseMessage = require('../response.js');
+const responseMessage = require('../responseMessages.js');
 const { canNotProcess, redirect, sendHTML } = responseMessage;
 
 const render = require('../render.js');
@@ -16,9 +16,9 @@ const createRow = ({ timestamp, name, comment }) => {
 };
 
 const validate = (req, res, next) => {
-  const { name, comment } = req.bodyParams;
+  const { comment } = req.bodyParams;
 
-  if (!name.trim() && !comment.trim()) {
+  if (!comment.trim()) {
     redirect(res, '/guestbook');
     return;
   }
@@ -59,9 +59,11 @@ class GuestbookHandler {
   }
 
   registerComment(req, res) {
-    const { timestamp, bodyParams: { name, comment } } = req;
+    const { timestamp, bodyParams: { comment } } = req;
     this.#guestbook.load(guestBookLoader(this.#dbFile));
 
+    const sessionId = req.cookies.sessionId;
+    const name = req.session.getSession(sessionId).username;
     if (!this.#guestbook.addComment({ name, timestamp, comment })) {
       canNotProcess(res);
       return;
