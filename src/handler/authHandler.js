@@ -1,10 +1,11 @@
 const render = require("../render");
 const { redirect } = require("../response");
+const { user } = require('../model/user.js');
 
 const login = (req, res) => {
   console.log(req.session);
 
-  render('./public/login.html', {}, (html) => {
+  render('./public/login.html', { error: '' }, (html) => {
     res.setHeader('content-type', 'text/html');
     res.end(html);
   });
@@ -29,17 +30,49 @@ const logout = (req, res) => {
 const handleLogin = (req, res) => {
   const { username, password } = req.bodyParams;
 
-  const sessionId = req.session.addUser(username, password);
+  if (user.authenticateUser(username, password)) {
+    const sessionId = req.session.addUser(username, password);
 
-  res.setHeader('set-cookie', `sessionId=${sessionId}`);
-  redirect(res, '/guestbook');
+    res.setHeader('set-cookie', `sessionId=${sessionId}`);
+
+    redirect(res, '/guestbook');
+    return;
+  }
+
+  render('./public/login.html', { error: 'Invalid credentials' }, (html) => {
+    res.statusCode = 401;
+    res.end(html);
+  })
 };
 
 const signup = (req, res) => {
-  render('./public/signup.html', {}, (html) => {
+  render('./public/signup.html', { error: '' }, (html) => {
     res.setHeader('content-type', 'text/html');
     res.end(html);
   })
 };
 
-module.exports = { login, handleLogin, logout, signup, };
+const handleSignUp = (req, res) => {
+  const { username, password } = req.bodyParams;
+
+  if (username && password) {
+    user.addUser(username, password);
+
+    const sessionId = req.session.addUser(username, password);
+
+    res.setHeader('set-cookie', `sessionId=${sessionId}`);
+    redirect(res, '/guestbook');
+    return;
+  }
+
+  render(
+    './public/signup.html',
+    { error: 'Please enter valid credentials' },
+    html => {
+      res.setHeader('content-type', 'text/html');
+      res.end(html);
+    }
+  )
+};
+
+module.exports = { login, handleLogin, logout, signup, handleSignUp };

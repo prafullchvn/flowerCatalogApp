@@ -13,7 +13,7 @@ const { GuestBook } = require('../model/comment.js');
 const { parsePostParams } = require('../middleware/paramsParser.js');
 
 //auth handler
-const { login, handleLogin, logout, signup, } = require('../handler/authHandler.js');
+const { login, handleLogin, logout, signup, handleSignUp, } = require('../handler/authHandler.js');
 const { injectCookies, authenticate, checkAuth } = require('../middleware/authMiddleware.js');
 
 const Session = require('../session.js');
@@ -41,6 +41,7 @@ const setRoutes = (config) => {
   router.get('/logout', logout);
 
   router.get('/signup', checkAuth, signup);
+  router.post('/signup', parsePostParams, handleSignUp);
 
   const { template, dbFile } = config;
   const guestbook = new GuestBook();
