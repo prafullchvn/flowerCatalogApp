@@ -3,7 +3,7 @@ const { redirect } = require("../responseMessages.js");
 const { user } = require('../model/user.js');
 
 const login = (req, res) => {
-  render('./public/login.html', { error: '' }, (html) => {
+  render('./src/resource/login.html', { error: '' }, (html) => {
     res.setHeader('content-type', 'text/html');
     res.end(html);
   });
@@ -35,14 +35,14 @@ const handleLogin = (req, res) => {
     return;
   }
 
-  render('./public/login.html', { error: 'Invalid credentials' }, (html) => {
+  render('./src/resource/login.html', { error: 'Invalid credentials' }, (html) => {
     res.statusCode = 401;
     res.end(html);
   })
 };
 
 const signup = (req, res) => {
-  render('./public/signup.html', { error: '' }, (html) => {
+  render('./src/resource/signup.html', { error: '' }, (html) => {
     res.setHeader('content-type', 'text/html');
     res.end(html);
   })
@@ -61,7 +61,7 @@ const handleSignUp = (req, res) => {
   }
 
   render(
-    './public/signup.html',
+    './src/resource/signup.html',
     { error: 'Please enter valid credentials' },
     html => {
       res.setHeader('content-type', 'text/html');
