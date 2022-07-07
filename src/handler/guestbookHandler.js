@@ -59,10 +59,10 @@ class GuestbookHandler {
 
   registerComment(req, res) {
     const { timestamp, bodyParams: { comment } } = req;
+    const name = req.user.username;
+
     this.#guestbook.load(guestBookLoader(this.#dbFile));
 
-    const sessionId = req.cookies.sessionId;
-    const name = req.session.getSession(sessionId).username;
     if (!this.#guestbook.addComment({ name, timestamp, comment })) {
       canNotProcess(res);
       return;
