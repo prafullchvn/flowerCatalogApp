@@ -13,7 +13,8 @@ const { GuestBook } = require('../model/comment.js');
 const { parsePostParams } = require('../middleware/paramsParser.js');
 
 //auth handler
-const { login, handleLogin, injectCookies, authenticate, logout, signup, checkAuth } = require('../handler/authHandler.js');
+const { login, handleLogin, logout, signup, } = require('../handler/authHandler.js');
+const { injectCookies, authenticate, checkAuth } = require('../middleware/authMiddleware.js');
 
 const Session = require('../session.js');
 
