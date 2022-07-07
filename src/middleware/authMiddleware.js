@@ -18,7 +18,7 @@ const injectUser = (req, res) => {
   const userSession = req.session.getSession(userSessionId);
 
   if (userSessionId && userSession) {
-    req.user = userSession;
+    req.user = userSession.data;
   }
 };
 

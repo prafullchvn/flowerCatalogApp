@@ -13,15 +13,6 @@ class Session {
     return sessionId;
   }
 
-  addUser(username, password) {
-    const date = new Date();
-    const sessionId = date.getTime()
-    const newSession = { username, password, date, sessionId };
-
-    this.#registry[sessionId] = newSession;
-    return sessionId;
-  }
-
   getSession(sessionId) {
     return this.#registry[sessionId];
   }

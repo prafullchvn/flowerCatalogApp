@@ -28,7 +28,7 @@ const handleLogin = (req, res) => {
   const { username, password } = req.bodyParams;
 
   if (user.authenticateUser(username, password)) {
-    const userSessionId = req.session.addUser(username, password);
+    const userSessionId = req.session.addData({ username, password });
 
     res.setHeader('set-cookie', `userSessionId=${userSessionId}`);
     redirect(res, '/guestbook');
@@ -53,7 +53,7 @@ const handleSignUp = (req, res) => {
 
   if (username && password) {
     user.addUser(username, password);
-    const userSessionId = req.session.addUser(username, password);
+    const userSessionId = req.session.addData({ username, password });
 
     res.setHeader('set-cookie', `userSessionId=${userSessionId}`);
     redirect(res, '/guestbook');
