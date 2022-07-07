@@ -4,13 +4,21 @@ class Session {
     this.#registry = {};
   }
 
+  addData(data) {
+    const date = new Date();
+    const sessionId = date.getTime()
+    const newSession = { data, date, sessionId };
+
+    this.#registry[sessionId] = newSession;
+    return sessionId;
+  }
+
   addUser(username, password) {
     const date = new Date();
     const sessionId = date.getTime()
     const newSession = { username, password, date, sessionId };
 
     this.#registry[sessionId] = newSession;
-
     return sessionId;
   }
 

@@ -14,7 +14,7 @@ const { parsePostParams } = require('../middleware/paramsParser.js');
 
 //auth handler
 const { login, handleLogin, logout, signup, handleSignUp, } = require('../handler/authHandler.js');
-const { injectCookies, authenticate, checkAuth } = require('../middleware/authMiddleware.js');
+const { injectCookies, authenticate, checkAuth, injectUser } = require('../middleware/authMiddleware.js');
 
 const Session = require('../session.js');
 
@@ -30,6 +30,7 @@ const setRoutes = (config) => {
   //injecting session
   const session = new Session();
   router.addMiddleware((req) => { req.session = session });
+  router.addMiddleware(injectUser);
 
   router.get('/', index);
   router.get('/index', index);

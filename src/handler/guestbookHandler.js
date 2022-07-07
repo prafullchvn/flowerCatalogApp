@@ -50,8 +50,7 @@ class GuestbookHandler {
 
     const comments = this.#guestbook.getAllComment();
     const commentRows = comments.map(createRow).join('');
-
-    const username = req.session.getSession(req.cookies.sessionId).username;
+    const username = req.user.username;
 
     render(this.#template, { user: `Welcome, ${username}`, error: '', commentRows }, (html) =>
       sendHTML(res, html)

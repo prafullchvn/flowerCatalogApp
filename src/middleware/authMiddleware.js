@@ -13,12 +13,18 @@ const injectCookies = (req, res) => {
   req.cookies = parseCookies(req.headers.cookie);
 };
 
-const authenticate = (req, res, next) => {
-  const { sessionId } = req.cookies;
-  const session = req.session.getSession(sessionId);
+const injectUser = (req, res) => {
+  const { userSessionId } = req.cookies;
+  const userSession = req.session.getSession(userSessionId);
 
-  if (!sessionId || !session) {
-    res.setHeader('set-cookie', 'sessionId=0; max-age:0');
+  if (userSessionId && userSession) {
+    req.user = userSession;
+  }
+};
+
+const authenticate = (req, res, next) => {
+  if (!req.user) {
+    res.setHeader('set-cookie', 'userSessionId=0; max-age:0');
     redirect(res, '/login');
     return;
   }
@@ -27,10 +33,7 @@ const authenticate = (req, res, next) => {
 };
 
 const checkAuth = (req, res, next) => {
-  const { sessionId } = req.cookies;
-  const session = req.session.getSession(sessionId);
-
-  if (session && sessionId) {
+  if (req.user) {
     redirect(res, '/guestbook');
     return;
   }
@@ -38,4 +41,4 @@ const checkAuth = (req, res, next) => {
   next();
 }
 
-module.exports = { injectCookies, authenticate, checkAuth };
+module.exports = { injectCookies, authenticate, checkAuth, injectUser };

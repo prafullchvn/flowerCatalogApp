@@ -10,12 +10,11 @@ const login = (req, res) => {
 };
 
 const logout = (req, res) => {
-  const { sessionId } = req.cookies;
-  const session = req.session.getSession(sessionId);
+  if (req.user) {
+    const userSessionId = req.user.sessionId;
 
-  if (session && sessionId) {
-    req.session.removeSession(sessionId); //delete session
-    res.setHeader('Set-Cookie', `sessionId=${sessionId}; Max-Age=0`);
+    req.session.removeSession(userSessionId);
+    res.setHeader('Set-Cookie', `userSessionId=; Max-Age=0`);
 
     redirect(res, '/login');
     return;
@@ -29,10 +28,9 @@ const handleLogin = (req, res) => {
   const { username, password } = req.bodyParams;
 
   if (user.authenticateUser(username, password)) {
-    const sessionId = req.session.addUser(username, password);
+    const userSessionId = req.session.addUser(username, password);
 
-    res.setHeader('set-cookie', `sessionId=${sessionId}`);
-
+    res.setHeader('set-cookie', `userSessionId=${userSessionId}`);
     redirect(res, '/guestbook');
     return;
   }
@@ -55,10 +53,9 @@ const handleSignUp = (req, res) => {
 
   if (username && password) {
     user.addUser(username, password);
+    const userSessionId = req.session.addUser(username, password);
 
-    const sessionId = req.session.addUser(username, password);
-
-    res.setHeader('set-cookie', `sessionId=${sessionId}`);
+    res.setHeader('set-cookie', `userSessionId=${userSessionId}`);
     redirect(res, '/guestbook');
     return;
   }
