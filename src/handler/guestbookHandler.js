@@ -71,6 +71,26 @@ class GuestbookHandler {
     this.#guestbook.save(guestbookSaver(this.#dbFile));
     redirect(res, '/guestbook');
   }
+
+  registerCommentApi(req, res) {
+    const { timestamp, bodyParams: { comment } } = req;
+    const name = req.user.username;
+
+    this.#guestbook.load(guestBookLoader(this.#dbFile));
+
+    const newComment = { name, timestamp, comment };
+    const commentSaved = this.#guestbook.addComment(newComment);
+    if (!comment && !commentSaved) {
+      canNotProcess(res);
+      return;
+    }
+
+    this.#guestbook.save(guestbookSaver(this.#dbFile));
+
+    res.statusCode = 200;
+    res.setHeader('content-type', 'application/json');
+    res.end(JSON.stringify(newComment));
+  }
 }
 
 

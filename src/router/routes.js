@@ -1,5 +1,9 @@
 const { Router } = require('server-using-http-module');
 
+/*
+{'/':indexHandler}
+*/
+
 const { notFound, fileHandler } = require('../handler/defaultHandler.js');
 
 const pagesHandler = require('../handler/pagesHandler.js');
@@ -31,11 +35,16 @@ const setRoutes = (config) => {
   const session = new Session();
   router.addMiddleware((req) => { req.session = session });
   router.addMiddleware(injectUser);
+  // router.addMiddleware((req) => {
+  //   console.log(req, req.cookies, req.url, req.session);
+  // });
+
 
   router.get('/', index);
   router.get('/index', index);
   router.get('/abelio', abelioFlower);
   router.get('/ageratum', ageratumFlower);
+  router.post('/uploadFile', parsePostParams, pagesHandler.uploadFile);
 
   router.get('/login', checkAuth, login);
   router.post('/login', parsePostParams, handleLogin);
@@ -58,6 +67,12 @@ const setRoutes = (config) => {
     parsePostParams,
     validate,
     (req, res) => commentHandler.registerComment(req, res)
+  );
+
+  router.post('/register-comment-api',
+    authenticate,
+    parsePostParams,
+    (req, res) => commentHandler.registerCommentApi(req, res)
   );
 
   return router;

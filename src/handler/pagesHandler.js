@@ -24,8 +24,14 @@ const ageratumFlower = (req, res) => {
   });
 };
 
+const uploadFile = (req, res) => {
+  res.statusCode = 200;
+  res.end('received file');
+};
+
 module.exports = {
   index,
   abelioFlower,
-  ageratumFlower
+  ageratumFlower,
+  uploadFile
 };
