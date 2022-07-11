@@ -2,16 +2,24 @@ const fs = require('fs');
 
 class GuestBook {
   #comments;
+  #latestId;
   constructor() {
     this.#comments = [];
+    this.#latestId = 0;
   }
 
   load(loader) {
-    this.#comments = loader();
+    const parsedData = loader();
+    this.#comments = parsedData.comments;
+    this.#latestId = parsedData.id;
   }
 
   save(saver) {
-    saver(JSON.stringify(this.#comments));
+    const obj = {
+      comments: this.#comments,
+      id: this.#latestId
+    }
+    saver(JSON.stringify(obj));
   }
 
   getAllComment() {
@@ -19,10 +27,14 @@ class GuestBook {
   }
 
   addComment({ timestamp, name, comment }) {
-    const comments = this.getAllComment(this.dbFile);
-    this.#comments.unshift({ timestamp, name, comment });
+    this.#comments.unshift({ id: this.#latestId, timestamp, name, comment });
+    this.#latestId = this.#latestId + 1;
 
     return true;
+  }
+
+  getLatestId() {
+    return this.#latestId;
   }
 }
 

@@ -75,6 +75,11 @@ const setRoutes = (config) => {
     (req, res) => commentHandler.registerCommentApi(req, res)
   );
 
+  router.get('/latest-comment-api',
+    authenticate,
+    (req, res) => commentHandler.latestCommentApi(req, res)
+  );
+
   return router;
 };
 

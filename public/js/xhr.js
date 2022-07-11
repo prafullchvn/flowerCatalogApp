@@ -1,14 +1,30 @@
-const addRow = ({ name, timestamp, comment }) => {
+const insertComments = comments => {
   const tbody = document.querySelector('.comment-table tbody');
-  const row = document.createElement('tr');
-  row.innerHTML = `<td>${timestamp}</td><td>${name}</td><td>${comment}</td>`;
-
-  tbody.prepend(row);
+  comments.forEach(({ id, comment, name, timestamp }) => {
+    const tr = document.createElement('tr');
+    tr.id = id;
+    tr.innerHTML = `<td>${timestamp}</td><td>${name}</td><td>${comment}</td>`;
+    tbody.prepend(tr);
+  });
 }
 
-const handleResponse = (event, xhr, form) => {
+const getLatestId = () => {
+  const tbody = document.querySelector('.comment-table tbody');
+  return tbody.getElementsByTagName('tr')[0].id;
+}
+
+const fetchLatestComments = () => {
+  const latestId = getLatestId();
+  sendRequest(`/latest-comment-api?id=${latestId}`, 'GET', '', (event, xhr) => {
+    insertComments(JSON.parse(xhr.response));
+  });
+}
+
+const handleResponse = (event, xhr) => {
+  const form = document.querySelector('form');
+
   if (xhr.status === 200) {
-    addRow(JSON.parse(xhr.responseText));
+    fetchLatestComments(JSON.parse(xhr.responseText));
     form.reset();
     return;
   }
@@ -16,8 +32,18 @@ const handleResponse = (event, xhr, form) => {
   alert('Error in submitting comment');
 }
 
-const submitComment = () => {
-  const form = document.querySelector('form');
+const sendRequest = (url, method, body, cb) => {
+  const xhr = new XMLHttpRequest();
+  const METHOD = method;
+  const URL = url;
+
+  xhr.open(METHOD, URL);
+  xhr.onload = (event) => cb(event, xhr);
+  xhr.send(body);
+}
+
+const submitComment = (event) => {
+  const form = event.target;
   const formData = new FormData(form);
   const searchParams = new URLSearchParams(formData);
   const body = searchParams.toString();
@@ -27,18 +53,13 @@ const submitComment = () => {
     return;
   }
 
-  const xhr = new XMLHttpRequest();
-  const METHOD = 'POST';
-  const URL = '/register-comment-api';
-
-  xhr.open(METHOD, URL);
-  xhr.onload = (event) => handleResponse(event, xhr, form);
-  xhr.send(body);
+  sendRequest('/register-comment-api', 'POST', body, handleResponse)
+  event.preventDefault();
 }
 
 const main = () => {
-  const button = document.querySelector('button');
-  button.onclick = () => submitComment();
+  const form = document.querySelector('form');
+  form.addEventListener('submit', submitComment);
 }
 
 window.onload = main;

@@ -5,9 +5,9 @@ const { canNotProcess, redirect, sendHTML } = responseMessage;
 
 const render = require('../render.js');
 
-const createRow = ({ timestamp, name, comment }) => {
+const createRow = ({ id, timestamp, name, comment }) => {
   return [
-    '<tr>',
+    `<tr id="${id}">`,
     `<td>${timestamp}</td>`,
     `<td>${name}</td>`,
     `<td>${comment}</td>`,
@@ -90,6 +90,17 @@ class GuestbookHandler {
     res.statusCode = 200;
     res.setHeader('content-type', 'application/json');
     res.end(JSON.stringify(newComment));
+  }
+
+  latestCommentApi(req, res) {
+    const latestId = req.url.searchParams.get('id');
+
+    this.#guestbook.load(guestBookLoader(this.#dbFile));
+    const comments = this.#guestbook.getAllComment();
+    const filteredComments = comments.filter(({ id }) => id > latestId);
+    res.statusCode = 200;
+    res.setHeader('content-type', 'application/json');
+    res.end(JSON.stringify(filteredComments));
   }
 }
 
