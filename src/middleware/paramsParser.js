@@ -18,13 +18,9 @@ const extractBoundary = header => {
 }
 
 const parsePostParams = (req, res, next) => {
-  let rawParams = '';
   let bufferArr = [];
 
-  req.on('data', (chunk) => {
-    rawParams += chunk;
-    bufferArr = [...bufferArr, ...chunk];
-  });
+  req.on('data', (chunk) => bufferArr = [...bufferArr, ...chunk]);
 
   req.on('end', () => {
     const buffer = Buffer.from(bufferArr);
@@ -32,6 +28,7 @@ const parsePostParams = (req, res, next) => {
     if (req.headers['content-type'].startsWith('multipart/form-data')) {
       const boundary = extractBoundary(req.headers['content-type']);
       req.bodyParams = parse(buffer, Buffer.from('--' + boundary));
+
       next();
       return;
     }

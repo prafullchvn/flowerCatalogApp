@@ -1,6 +1,3 @@
-const fs = require('fs');
-
-
 const CRLF = Buffer.from('\r\n');
 const DOUBLE_CRLF = Buffer.from('\r\n\r\n');
 
@@ -12,25 +9,20 @@ const extractHeaders = group => {
 }
 
 const extractBody = group => {
-  const startOfBody = group.indexOf(DOUBLE_CRLF) + 4;
-  return group.slice(startOfBody, group.length - 2);
+  const startOfBody = group.indexOf(DOUBLE_CRLF) + DOUBLE_CRLF.length;
+  return group.slice(startOfBody, group.length - CRLF.length);
 }
 
 const parseHeaders = rawHeaders => {
-  const headersToParse = rawHeaders.toString().trim().split(CRLF)[0];
+  const headers = rawHeaders.toString().trim().replace(CRLF, ';');
 
-
-  return headersToParse.toString().split(';').reduce((parsed, header) => {
+  return headers.split(';').reduce((parsed, header) => {
     const fieldValue = header.split('=');
     if (fieldValue.length > 1) {
       parsed[fieldValue[0].trim()] = fieldValue[1].trim();
     }
     return parsed;
   }, {});
-
-  return {
-    name: 'image'
-  }
 }
 
 const isFile = headers => {
@@ -65,29 +57,36 @@ const parseGroup = fieldGroup => {
   return parsedGroup;
 }
 
+const createFieldGroup = ({ name, buffer: body, fileName }) => {
+  if (fileName) {
+    return { filename: fileName, buffer: body };
+  }
+  return body;
+}
+
 
 const parse = (buffer, boundary) => {
-  let start = 0;
-  let end = buffer.indexOf(boundary, start + 1);
-  let parsedGroups = {};
+  const boundaryLength = boundary.length;
+  let start = 0 + boundaryLength;
+  let end = buffer.indexOf(boundary, start);
+  let parsedRequestBody = {};
 
   while (end !== -1) {
     const parsedGroup = parseGroup(buffer.slice(start, end));
+    const { name } = parsedGroup;
 
-    const { name, buffer: body, fileName } = parsedGroup;
-
-    if (fileName) {
-      fs.writeFileSync('uploaded.jpg', body);
-      parsedGroups[name] = { filename: fileName, buffer: body };
+    if (parsedRequestBody[name]) {
+      parsedRequestBody[name] = [].concat(parsedRequestBody[name]);
+      parsedRequestBody[name].push(createFieldGroup(parsedGroup));
     } else {
-      parsedGroups[name] = body;
+      parsedRequestBody[name] = createFieldGroup(parsedGroup);
     }
 
-    start = end;
-    end = buffer.indexOf(boundary, end + 1);
+    start = end + boundaryLength;
+    end = buffer.indexOf(boundary, start);
   }
 
-  return parsedGroups;
+  return parsedRequestBody;
 }
 
 module.exports = parse;
