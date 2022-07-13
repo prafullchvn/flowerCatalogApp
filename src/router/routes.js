@@ -1,9 +1,5 @@
 const { Router } = require('server-using-http-module');
 
-/*
-{'/':indexHandler}
-*/
-
 const { notFound, fileHandler } = require('../handler/defaultHandler.js');
 
 const pagesHandler = require('../handler/pagesHandler.js');
@@ -18,7 +14,9 @@ const { parsePostParams } = require('../middleware/paramsParser.js');
 
 //auth handler
 const { login, handleLogin, logout, signup, handleSignUp, } = require('../handler/authHandler.js');
-const { injectCookies, authenticate, checkAuth, injectUser } = require('../middleware/authMiddleware.js');
+
+const auth = require('../middleware/authMiddleware.js');
+const { injectCookies, authenticate, checkAuth, injectUser } = auth;
 
 const Session = require('../session.js');
 
@@ -35,10 +33,6 @@ const setRoutes = (config) => {
   const session = new Session();
   router.addMiddleware((req) => { req.session = session });
   router.addMiddleware(injectUser);
-  // router.addMiddleware((req) => {
-  //   console.log(req, req.cookies, req.url, req.session);
-  // });
-
 
   router.get('/', index);
   router.get('/index', index);

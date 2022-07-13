@@ -7,7 +7,7 @@
     "test": "test"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "mocha",
     "start": "node index.js",
     "start-live": "nodemon index.js"
   },
@@ -23,7 +23,8 @@
   "homepage": "https://github.com/prafullchvn/flowerCatalogApp#readme",
   "dependencies": {
     "mime-types": "^2.1.35",
-    "server-using-http-module": "github:prafullchvn/server-using-http-module"
+    "server-using-http-module": "github:prafullchvn/server-using-http-module",
+    "supertest": "^6.2.4"
   },
   "devDependencies": {
     "nodemon": "^2.0.19"
