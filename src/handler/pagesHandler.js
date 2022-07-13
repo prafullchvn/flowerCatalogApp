@@ -25,7 +25,12 @@ const ageratumFlower = (req, res) => {
 };
 
 const uploadFile = (req, res) => {
-  req.bodyParams.text_file.forEach(({ filename, buffer }) => {
+  console.log(req);
+  req.bodyParams.text_file?.forEach(({ filename, buffer }) => {
+    fs.writeFileSync(`${req.rootDir}/uploaded/${filename}`, buffer);
+  });
+
+  req.bodyParams.images?.forEach(({ filename, buffer }) => {
     fs.writeFileSync(`${req.rootDir}/uploaded/${filename}`, buffer);
   })
 

@@ -3,3 +3,4 @@ node_modules
 /public/song
 /public/videos
 /public/.DS_Store
+/public/uploaded

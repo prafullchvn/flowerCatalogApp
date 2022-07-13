@@ -1,20 +1,20 @@
 <html>
   <head>
     <title>Upload File</title>
-    <link rel="stylesheet" href="drag-and-drop.css">
+    <link rel="stylesheet" href="css/drag-and-drop.css">
     <script src="/js/send-xhr-request.js"></script>
     <script src="js/upload-form.js"></script>
   </head>
   <body>
     <form action="/uploadFile" method="POST" enctype="multipart/form-data">
-      <div>
+      <div class="input-field">
         <input type="text" name="field1" value="some value">
       </div>
-      <div>
+      <div class="input-field">
         <label for="File">Upload Text File</label>
         <input type="file" name="text_file" />
       </div>
-      <div>
+      <div class="input-field">
         <label for="File">Upload Photo File</label>
         <input type="file" name="text_file" />
       </div>
@@ -23,6 +23,10 @@
 
     <section>
       <div class="drag-area">
+
+      </div>
+      <button id="drop-upload">Upload</button>
+      <div class="previews">
 
       </div>
     </section>

@@ -8,7 +8,8 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index.js"
+    "start": "node index.js",
+    "start-live": "nodemon index.js"
   },
   "repository": {
     "type": "git",
@@ -23,5 +24,8 @@
   "dependencies": {
     "mime-types": "^2.1.35",
     "server-using-http-module": "github:prafullchvn/server-using-http-module"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.19"
   }
 }
