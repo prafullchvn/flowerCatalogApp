@@ -1,3 +1,4 @@
+const assert = require('assert');
 const fs = require('fs');
 const request = require('supertest');
 
@@ -5,50 +6,42 @@ const { createApp } = require('../src/createApp.js');
 const Session = require('../src/session.js');
 
 describe('/guestbook', () => {
-  let sessionId, app, mockedConfig;
-
+  let mockedConfig;
   beforeEach(() => {
     mockedConfig = {
       template: './test/data/guestBook.html',
       dbFile: './test/data/comments.json'
     };
-
-    const session = new Session();
-    sessionId = session.addData({ username: 'root', password: 'root' });
-    app = createApp(mockedConfig, session);
-  });
-
+  })
   after(() => {
+
     const defaultData = JSON.stringify({ comments: [], id: 0 });
     fs.writeFileSync(mockedConfig.dbFile, defaultData, 'utf8');
   });
 
   it('Should give the guestbook if valid cookie is sent.', (done) => {
+    const mockFs = {
+      readFileSync: (file) => {
+        assert.strictEqual(file, mockedConfig.dbFile);
+        return JSON.stringify({ comments: [], latestId: 0 });
+      },
+      writeFileSync: () => { }
+    }
+
+    const session = new Session();
+    const sessionId = session.addData({ username: 'root', password: 'root' });
+    const app = createApp(mockedConfig, session, mockFs);
+
+
     request(app)
       .get('/guestbook')
       .set('Cookie', `userSessionId=${sessionId}`)
-      .expect(200, done)
-  });
-
-  it('Should add comment to database.', (done) => {
-    request(app)
-      .post('/register-comment')
-      .send('comment=newComment')
-      .set('Cookie', `sessionId=${sessionId}`)
-      .expect(302, done);
-  });
-
-  it('Should not add empty comment to database.', (done) => {
-    request(app)
-      .post('/register-comment')
-      .send('comment=')
-      .set('Cookie', `sessionId=${sessionId}`)
-      .expect(302, done)
+      .expect(200, done);
   });
 });
 
 describe('/signup', () => {
-  let app, mockedConfig;
+  let app, mockedConfig, mockFs;
 
   beforeEach(() => {
     mockedConfig = {
@@ -56,7 +49,14 @@ describe('/signup', () => {
       dbFile: './test/data/comments.json'
     };
 
-    app = createApp(mockedConfig, new Session());
+    mockFs = {
+      readFileSync: (file) => {
+        return JSON.stringify({ comments: [], latestId: 0 });
+      },
+      writeFileSync: () => { }
+    }
+
+    app = createApp(mockedConfig, new Session(), mockFs);
   });
 
   it('Should give 200 when tried visit /signup.', (done) => {
@@ -90,7 +90,7 @@ describe('/signup', () => {
     (done) => {
       const session = new Session();
       const sessionId = session.addData({ username: 'root', password: 'root' });
-      const app = createApp(mockedConfig, session);
+      const app = createApp(mockedConfig, session, mockFs);
 
       request(app)
         .get('/login')
@@ -100,7 +100,7 @@ describe('/signup', () => {
 });
 
 describe('/login', () => {
-  let app, mockedConfig;
+  let app, mockedConfig, mockFs;
 
   beforeEach(() => {
     mockedConfig = {
@@ -108,7 +108,14 @@ describe('/login', () => {
       dbFile: './test/data/comments.json'
     };
 
-    app = createApp(mockedConfig, new Session());
+    mockFs = {
+      readFileSync: (file) => {
+        return JSON.stringify({ comments: [], latestId: 0 });
+      },
+      writeFileSync: () => { }
+    };
+
+    app = createApp(mockedConfig, new Session(), mockFs);
   });
 
   it('Should redirect to guestbook if valid username and password is passed when tried to login',
@@ -144,7 +151,7 @@ describe('/login', () => {
   it('Should redirect to guestbook if user is already logged in, when tried to login.', (done) => {
     const session = new Session();
     const sessionId = session.addData({ username: 'root', password: 'root' });
-    const app = createApp(mockedConfig, session);
+    const app = createApp(mockedConfig, session, mockFs);
 
     request(app)
       .get('/login')
@@ -154,7 +161,7 @@ describe('/login', () => {
 });
 
 describe('guestbook api', () => {
-  let app, sessionId, mockedConfig;
+  let mockFs, mockedConfig;
 
   beforeEach(() => {
     mockedConfig = {
@@ -162,9 +169,16 @@ describe('guestbook api', () => {
       dbFile: './test/data/comments.json'
     };
 
-    const session = new Session();
-    sessionId = session.addData({ username: 'root', password: 'root' });
-    app = createApp(mockedConfig, session);
+    mockFs = {
+      readFileSync: (file) => {
+        console.log(file)
+        assert.strictEqual(file, mockedConfig.dbFile);
+        return JSON.stringify({ comments: [], latestId: 0 });
+      },
+      writeFileSync: (file) => {
+        assert.strictEqual(file, mockedConfig.dbFile);
+      }
+    }
   });
 
   after(() => {
@@ -173,6 +187,10 @@ describe('guestbook api', () => {
   });
 
   it('Should add comment.', (done) => {
+    const session = new Session();
+    const sessionId = session.addData({ username: 'root', password: 'root' });
+    const app = createApp(mockedConfig, session, mockFs);
+
     request(app)
       .post('/register-comment-api')
       .send('comment=newComment')
@@ -181,6 +199,10 @@ describe('guestbook api', () => {
   });
 
   it('Should not add empty comment.', (done) => {
+    const session = new Session();
+    const sessionId = session.addData({ username: 'root', password: 'root' });
+    const app = createApp(mockedConfig, session, mockFs);
+
     request(app)
       .post('/register-comment-api')
       .send('comment=')
@@ -190,7 +212,7 @@ describe('guestbook api', () => {
 });
 
 describe('/logout', () => {
-  let mockedConfig, sessionId, app;
+  let mockedConfig, sessionId, app, mockFs;
 
   beforeEach(() => {
     mockedConfig = mockedConfig = {
@@ -198,9 +220,16 @@ describe('/logout', () => {
       dbFile: './test/data/comments.json'
     };
 
+    mockFs = {
+      readFileSync: (file) => {
+        return JSON.stringify({ comments: [], latestId: 0 });
+      },
+      writeFileSync: () => { }
+    }
+
     const session = new Session();
     sessionId = session.addData({ username: 'root', password: 'root' });
-    app = createApp(mockedConfig, session);
+    app = createApp(mockedConfig, session, mockFs);
   });
 
   it('Should return 302 response if user is logged in.', (done) => {
@@ -213,7 +242,7 @@ describe('/logout', () => {
   });
 
   it('Should return 400 response if user is not logged in.', (done) => {
-    const app = createApp(mockedConfig, new Session());
+    const app = createApp(mockedConfig, new Session(), mockFs);
 
     request(app)
       .get('/logout')

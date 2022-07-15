@@ -1,32 +1,32 @@
 const { Router } = require("express");
-const { validate, GuestbookHandler } = require("../handler/guestbookHandler");
-const { authenticate } = require("../middleware/authMiddleware");
-const { GuestBook } = require("../model/comment");
+const fs = require('fs');
 
-const createGuestbookRoutes = ({ template, dbFile }) => {
+const { GuestbookHandler, createSaver, createLoader } = require("../handler/guestbookHandler");
+const { authenticate } = require("../middleware/authMiddleware");
+const { Comments } = require("../model/comment");
+
+const createGuestbookRoutes = ({ template, dbFile }, fs) => {
   const router = Router();
-  const guestbook = new GuestBook();
-  const commentHandler = new GuestbookHandler(guestbook, template, dbFile);
+
+  const saveComments = createSaver(dbFile, fs.writeFileSync);
+  const loadComments = createLoader(dbFile, fs.readFileSync);
+
+  const comments = new Comments(saveComments, loadComments);
+  const guestbookHandler = new GuestbookHandler(comments, template, dbFile);
 
   router.get('/guestbook',
     authenticate,
-    (req, res) => commentHandler.index(req, res)
-  );
-
-  router.post('/register-comment',
-    authenticate,
-    validate,
-    (req, res) => commentHandler.registerComment(req, res)
+    (req, res) => guestbookHandler.index(req, res)
   );
 
   router.post('/register-comment-api',
     authenticate,
-    (req, res) => commentHandler.registerCommentApi(req, res)
+    (req, res) => guestbookHandler.registerCommentApi(req, res)
   );
 
   router.get('/latest-comment-api',
     authenticate,
-    (req, res) => commentHandler.latestCommentApi(req, res)
+    (req, res) => guestbookHandler.latestCommentApi(req, res)
   );
 
   return router;

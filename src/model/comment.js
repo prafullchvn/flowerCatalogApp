@@ -1,15 +1,20 @@
 const fs = require('fs');
 
-class GuestBook {
+class Comments {
   #comments;
   #latestId;
-  constructor() {
+  #saveComments;
+  #loadComments;
+
+  constructor(saveComments, loadComments) {
     this.#comments = [];
     this.#latestId = 0;
+    this.#saveComments = saveComments;
+    this.#loadComments = loadComments;
   }
 
   load(loader) {
-    const parsedData = loader();
+    const parsedData = this.#loadComments();
     this.#comments = parsedData.comments;
     this.#latestId = parsedData.id;
   }
@@ -19,7 +24,7 @@ class GuestBook {
       comments: this.#comments,
       id: this.#latestId
     }
-    saver(JSON.stringify(obj));
+    this.#saveComments(JSON.stringify(obj));
   }
 
   getAllComment() {
@@ -38,4 +43,4 @@ class GuestBook {
   }
 }
 
-module.exports = { GuestBook };
+module.exports = { Comments };

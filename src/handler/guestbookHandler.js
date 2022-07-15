@@ -1,8 +1,5 @@
 const fs = require('fs');
 
-const responseMessage = require('../responseMessages.js');
-const { canNotProcess, redirect, sendHTML } = responseMessage;
-
 const render = require('../render.js');
 
 const createRow = ({ id, timestamp, name, comment }) => {
@@ -26,60 +23,45 @@ const validate = (req, res, next) => {
   next();
 }
 
-const guestBookLoader = (dbFile) => () => {
+const createLoader = (dbFile, writeFile) => () => {
   return JSON.parse(fs.readFileSync(dbFile, 'utf8'));
 }
 
-const guestbookSaver = (dbFile) => (guestbook) => {
+const createSaver = (dbFile, readFile) => (guestbook) => {
   fs.writeFileSync(dbFile, guestbook, 'utf8');
 };
 
 class GuestbookHandler {
-  #guestbook;
+  #comments;
   #template;
-  #dbFile;
 
-  constructor(guestbook, template, dbFile) {
-    this.#guestbook = guestbook;
+  constructor(comments, template, dbFile) {
+    this.#comments = comments;
     this.#template = template;
-    this.#dbFile = dbFile;
   }
 
   index(req, res) {
-    this.#guestbook.load(guestBookLoader(this.#dbFile));
+    this.#comments.load();
 
-    const comments = this.#guestbook.getAllComment();
+    const comments = this.#comments.getAllComment();
     const commentRows = comments.map(createRow).join('');
     const username = req.user.username;
 
-    render(this.#template, { user: `Welcome, ${username}`, error: '', commentRows }, (html) =>
+    render(
+      this.#template,
+      { user: `Welcome, ${username}`, error: '', commentRows }, (html) =>
       res.send(html)
     );
-  }
-
-  registerComment(req, res) {
-    const { timestamp, body: { comment } } = req;
-    const name = req.user.username;
-
-    this.#guestbook.load(guestBookLoader(this.#dbFile));
-
-    if (!this.#guestbook.addComment({ name, timestamp, comment })) {
-      res.status(500).send('can not process');
-      return;
-    }
-
-    this.#guestbook.save(guestbookSaver(this.#dbFile));
-    res.redirect('/guestbook');
   }
 
   registerCommentApi(req, res) {
     const { timestamp, body: { comment } } = req;
     const name = req.user.username;
 
-    this.#guestbook.load(guestBookLoader(this.#dbFile));
+    this.#comments.load();
 
     const newComment = { name, timestamp, comment };
-    const commentSaved = this.#guestbook.addComment(newComment);
+    const commentSaved = this.#comments.addComment(newComment);
 
     if (comment === '') {
       res.status(400).json({ error: 'comment can not be empty' });
@@ -91,7 +73,7 @@ class GuestbookHandler {
       return;
     }
 
-    this.#guestbook.save(guestbookSaver(this.#dbFile));
+    this.#comments.save();
 
     res.status(200).json(newComment);
   }
@@ -99,8 +81,8 @@ class GuestbookHandler {
   latestCommentApi(req, res) {
     const latestId = req.query.id;
 
-    this.#guestbook.load(guestBookLoader(this.#dbFile));
-    const comments = this.#guestbook.getAllComment();
+    this.#comments.load();
+    const comments = this.#comments.getAllComment();
     const filteredComments = comments.filter(({ id }) => id > latestId);
 
     res.status(200).json(filteredComments);
@@ -110,5 +92,7 @@ class GuestbookHandler {
 
 module.exports = {
   validate,
-  GuestbookHandler
+  GuestbookHandler,
+  createLoader,
+  createSaver
 };

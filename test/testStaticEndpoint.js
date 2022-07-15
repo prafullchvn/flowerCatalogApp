@@ -12,7 +12,14 @@ describe('Static end points', () => {
       dbFile: './test/data/comments.json'
     };
 
-    app = createApp(mockedConfig, new Session());
+    const mockFs = {
+      readFileSync: (file) => {
+        return JSON.stringify({ comments: [], latestId: 0 });
+      },
+      writeFileSync: () => { }
+    }
+
+    app = createApp(mockedConfig, new Session(), mockFs);
   })
 
   it('Should return 200 status code when tried visit /.', (done) => {
