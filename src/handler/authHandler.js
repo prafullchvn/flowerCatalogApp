@@ -32,7 +32,7 @@ const handleLogin = (req, res) => {
   render('./src/resource/login.html',
     { error: 'Invalid credentials' },
     (html) => {
-      res.status(400).send(html);
+      res.status(422).send(html);
     });
 };
 

@@ -76,7 +76,7 @@ describe('/signup', () => {
         .expect('Location', '/guestbook', done)
     });
 
-  it('Should redirect to signup if invalid username and password is passed when tried to signup',
+  it('Should redirect to signup if no password is sent.',
     (done) => {
       request(app)
         .post('/signup')
@@ -126,7 +126,7 @@ describe('/login', () => {
       request(app)
         .post('/login')
         .send('username=root&password=root123')
-        .expect(400)
+        .expect(422)
         .expect('content-type', /html/)
         .expect(/invalid credentials/i, done)
     });
