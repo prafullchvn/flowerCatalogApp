@@ -3,10 +3,7 @@ const { redirect } = require("../responseMessages.js");
 const { user } = require('../model/user.js');
 
 const login = (req, res) => {
-  render('./src/resource/login.html', { error: '' }, (html) => {
-    res.setHeader('content-type', 'text/html');
-    res.end(html);
-  });
+  render('./src/resource/login.html', { error: '' }, (html) => res.send(html));
 };
 
 const logout = (req, res) => {
@@ -14,49 +11,45 @@ const logout = (req, res) => {
     const userSessionId = req.user.sessionId;
 
     req.session.removeSession(userSessionId);
-    res.setHeader('Set-Cookie', `userSessionId=; Max-Age=0`);
+    res.clearCookie('userSessionId').redirect('/login');
 
-    redirect(res, '/login');
     return;
   }
 
-  res.statusCode = 400;
-  res.end('No user have logged in');
+  res.status(400).send('No user have logged in');
 }
 
 const handleLogin = (req, res) => {
-  const { username, password } = req.bodyParams;
+  const { username, password } = req.body;
 
   if (user.authenticateUser(username, password)) {
     const userSessionId = req.session.addData({ username, password });
 
-    res.setHeader('set-cookie', `userSessionId=${userSessionId}`);
-    redirect(res, '/guestbook');
+    res.cookie('userSessionId', userSessionId).redirect('/guestbook');
     return;
   }
 
-  render('./src/resource/login.html', { error: 'Invalid credentials' }, (html) => {
-    res.statusCode = 401;
-    res.end(html);
-  })
+  render('./src/resource/login.html',
+    { error: 'Invalid credentials' },
+    (html) => {
+      res.status(400).send(html);
+    });
 };
 
 const signup = (req, res) => {
   render('./src/resource/signup.html', { error: '' }, (html) => {
-    res.setHeader('content-type', 'text/html');
-    res.end(html);
+    res.send(html);
   })
 };
 
 const handleSignUp = (req, res) => {
-  const { username, password } = req.bodyParams;
+  const { username, password } = req.body;
 
   if (username && password) {
     user.addUser(username, password);
     const userSessionId = req.session.addData({ username, password });
 
-    res.setHeader('set-cookie', `userSessionId=${userSessionId}`);
-    redirect(res, '/guestbook');
+    res.cookie('userSessionId', userSessionId).redirect('/guestbook');
     return;
   }
 
@@ -64,8 +57,7 @@ const handleSignUp = (req, res) => {
     './src/resource/signup.html',
     { error: 'Please enter valid credentials' },
     html => {
-      res.setHeader('content-type', 'text/html');
-      res.end(html);
+      res.status(400).send(html);
     }
   )
 };

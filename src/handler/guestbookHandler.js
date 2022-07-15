@@ -18,8 +18,8 @@ const createRow = ({ id, timestamp, name, comment }) => {
 const validate = (req, res, next) => {
   const { comment } = req.bodyParams;
 
-  if (!comment.trim()) {
-    redirect(res, '/guestbook');
+  if (comment.trim() === '') {
+    res.redirect('/guestbook');
     return;
   }
 
@@ -53,54 +53,57 @@ class GuestbookHandler {
     const username = req.user.username;
 
     render(this.#template, { user: `Welcome, ${username}`, error: '', commentRows }, (html) =>
-      sendHTML(res, html)
+      res.send(html)
     );
   }
 
   registerComment(req, res) {
-    const { timestamp, bodyParams: { comment } } = req;
+    const { timestamp, body: { comment } } = req;
     const name = req.user.username;
 
     this.#guestbook.load(guestBookLoader(this.#dbFile));
 
     if (!this.#guestbook.addComment({ name, timestamp, comment })) {
-      canNotProcess(res);
+      res.status(500).send('can not process');
       return;
     }
 
     this.#guestbook.save(guestbookSaver(this.#dbFile));
-    redirect(res, '/guestbook');
+    res.redirect('/guestbook');
   }
 
   registerCommentApi(req, res) {
-    const { timestamp, bodyParams: { comment } } = req;
+    const { timestamp, body: { comment } } = req;
     const name = req.user.username;
 
     this.#guestbook.load(guestBookLoader(this.#dbFile));
 
     const newComment = { name, timestamp, comment };
     const commentSaved = this.#guestbook.addComment(newComment);
-    if (!comment && !commentSaved) {
-      canNotProcess(res);
+
+    if (comment === '') {
+      res.status(400).json({ error: 'comment can not be empty' });
+      return;
+    }
+
+    if (!commentSaved) {
+      res.status(500).json({ error: 'Failed to add comment' });
       return;
     }
 
     this.#guestbook.save(guestbookSaver(this.#dbFile));
 
-    res.statusCode = 200;
-    res.setHeader('content-type', 'application/json');
-    res.end(JSON.stringify(newComment));
+    res.status(200).json(newComment);
   }
 
   latestCommentApi(req, res) {
-    const latestId = req.url.searchParams.get('id');
+    const latestId = req.query.id;
 
     this.#guestbook.load(guestBookLoader(this.#dbFile));
     const comments = this.#guestbook.getAllComment();
     const filteredComments = comments.filter(({ id }) => id > latestId);
-    res.statusCode = 200;
-    res.setHeader('content-type', 'application/json');
-    res.end(JSON.stringify(filteredComments));
+
+    res.status(200).json(filteredComments);
   }
 }
 

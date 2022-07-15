@@ -1,11 +1,13 @@
+const createError = (message) => JSON.stringify({ error: message })
+
 const badRequest = (res) => {
   res.statusCode = 405;
-  res.end('Bad Request');
+  res.end(createError('Bad Request'));
 };
 
 const canNotProcess = (res) => {
   res.statusCode = 500;
-  res.end('Server is unable to process request.');
+  res.end(createError('Server is unable to process request.'));
 };
 
 const redirect = (res, location) => {

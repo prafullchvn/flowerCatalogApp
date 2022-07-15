@@ -1,0 +1,57 @@
+<html>
+  <head>
+    <title>Sign up</title>
+  </head>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      font-family: sans-serif;
+      font-size: 18px;
+    }
+
+    main {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100%;
+    }
+
+    form {
+      width: fit-content;
+    }
+
+    .field {
+      margin: 10px;
+    }
+
+    .field>* {
+      padding: 10px;
+    }
+
+    input[type='submit'] {
+      padding: 5px;
+      margin-left: 100%;
+    }
+  </style>
+  <body>
+    <main>
+      <form action="/signup" method="POST">
+        <h2>Sign up</h2>
+        <h3 style="color:red;">@error</h3>
+        <div class="field">
+          <label for="username">username</label>
+          <input type="text" name="username">
+        </div>
+
+        <div class="field">
+          <label for="passsword">Password</label>
+          <input type="password" name="password">
+        </div>
+
+        <input type="submit" value="Sign Up">
+      </form>
+    </main>
+  </body>
+
+</html>

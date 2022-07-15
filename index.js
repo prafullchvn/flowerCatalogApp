@@ -1,11 +1,12 @@
-const { setRoutes } = require('./src/router/routes.js');
-const { startServer } = require('server-using-http-module');
+const { createApp } = require("./src/createApp.js");
+const Session = require('./src/session.js');
 
-const PORT = 8080;
 const config = {
   template: './src/resource/guestBook.html',
   dbFile: './src/resource/comments.json'
 };
 
+const PORT = 8080;
 
-startServer(PORT, setRoutes(config));
+const app = createApp(config, new Session());
+app.listen(PORT, () => console.log('server started on ' + PORT));

@@ -24,8 +24,9 @@ const parsePostParams = (req, res, next) => {
 
   req.on('end', () => {
     const buffer = Buffer.from(bufferArr);
+    const contentType = req.headers['content-type'];
 
-    if (req.headers['content-type'].startsWith('multipart/form-data')) {
+    if (contentType && contentType.startsWith('multipart/form-data')) {
       const boundary = extractBoundary(req.headers['content-type']);
       req.bodyParams = parse(buffer, Buffer.from('--' + boundary));
 

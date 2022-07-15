@@ -13,13 +13,13 @@ const injectCookies = (req, res) => {
   req.cookies = parseCookies(req.headers.cookie);
 };
 
-const injectUser = (req, res) => {
+const injectUser = (req, res, next) => {
   const { userSessionId } = req.cookies;
   const userSession = req.session.getSession(userSessionId);
-
   if (userSessionId && userSession) {
     req.user = userSession.data;
   }
+  next();
 };
 
 const authenticate = (req, res, next) => {

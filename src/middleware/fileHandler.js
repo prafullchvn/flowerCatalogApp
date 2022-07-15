@@ -1,11 +1,7 @@
 const fs = require('fs');
 const mime = require('mime-types');
 
-const notFound = (request, response) => {
-  response.status(404).send('Not Found');
-};
-
-const fileHandler = (request, response, next) => {
+module.exports = (request, response, next) => {
   const { pathname } = request.url;
   const filePath = './public' + pathname;
 
@@ -28,5 +24,3 @@ const fileHandler = (request, response, next) => {
 
   next();
 };
-
-module.exports = { notFound, fileHandler };

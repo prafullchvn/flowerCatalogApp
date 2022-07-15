@@ -1,9 +1,9 @@
-const { Router } = require('server-using-http-module');
-
-const { notFound, fileHandler } = require('../handler/defaultHandler.js');
+// const { router } = require('server-using-http-module');
+const express = require('express');
+const { Router, static } = express;
 
 const pagesHandler = require('../handler/pagesHandler.js');
-const { index, abelioFlower, ageratumFlower } = pagesHandler;
+const { index, abelioFlower, ageratumFlower, uploadFile } = pagesHandler;
 
 const guestbookHandler = require('../handler/guestbookHandler.js');
 const { GuestbookHandler, validate } = guestbookHandler;
@@ -16,36 +16,40 @@ const { parsePostParams } = require('../middleware/paramsParser.js');
 const { login, handleLogin, logout, signup, handleSignUp, } = require('../handler/authHandler.js');
 
 const auth = require('../middleware/authMiddleware.js');
-const { injectCookies, authenticate, checkAuth, injectUser } = auth;
-
+const injectCookies = require('../middleware/injectCookies.js');
+const injectRootDir = require('../middleware/injectRootDir.js');
+// const injectSession = require('../middleware/injectSession.js');
+const injectUrl = require('../middleware/injectUrl.js');
 const Session = require('../session.js');
+const { authenticate, checkAuth, injectUser } = auth;
 
-const setRoutes = (config) => {
-  const router = new Router();
 
-  router.addDefaultHandler(fileHandler);
-  router.addDefaultHandler(notFound);
+const setRoutes = (config, session) => {
+  const router = Router();
 
-  router.addMiddleware(addTimestamp);
-  router.addMiddleware(injectCookies);
-
-  //injecting session
-  const session = new Session();
-  router.addMiddleware((req) => { req.session = session });
-  router.addMiddleware(injectUser);
+  router.use(addTimestamp);
+  router.use(injectCookies);
+  router.use((req, res, next) => {
+    req.session = session;
+    next();
+  });
+  router.use(injectUser);
+  router.use(express.urlencoded({ extended: true }));
+  router.use(injectRootDir);
+  router.use(injectUrl);
 
   router.get('/', index);
   router.get('/index', index);
   router.get('/abelio', abelioFlower);
   router.get('/ageratum', ageratumFlower);
-  router.post('/uploadFile', parsePostParams, pagesHandler.uploadFile);
+  router.post('/uploadFile', parsePostParams, uploadFile);
 
   router.get('/login', checkAuth, login);
-  router.post('/login', parsePostParams, handleLogin);
+  router.post('/login', handleLogin);
   router.get('/logout', authenticate, logout);
 
   router.get('/signup', checkAuth, signup);
-  router.post('/signup', parsePostParams, handleSignUp);
+  router.post('/signup', handleSignUp);
 
   const { template, dbFile } = config;
   const guestbook = new GuestBook();
@@ -58,14 +62,12 @@ const setRoutes = (config) => {
 
   router.post('/register-comment',
     authenticate,
-    parsePostParams,
     validate,
     (req, res) => commentHandler.registerComment(req, res)
   );
 
   router.post('/register-comment-api',
     authenticate,
-    parsePostParams,
     (req, res) => commentHandler.registerCommentApi(req, res)
   );
 
@@ -74,25 +76,9 @@ const setRoutes = (config) => {
     (req, res) => commentHandler.latestCommentApi(req, res)
   );
 
+  router.use(static('public'));
+
   return router;
 };
-
-// GET /flower
-// GET /anotherFlower
-
-// guestBookRouter.get('/guest-book')
-// guestBookRouter.get('/guest-book/comments')
-// guestBookRouter.post('/guest-book/comment')
-
-// router.get('/flower')
-// router.get('/anotherFlower')
-// router.all('/guest-book', guestBookRouter.bind({comments:comments}))
-// router.get('/',notFound)
-
-
-
-// GET /guest-book
-// GET /guest-book/comments
-// POST /guest-book/comment
 
 module.exports = { setRoutes };

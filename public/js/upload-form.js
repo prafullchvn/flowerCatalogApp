@@ -27,8 +27,6 @@
     const formSubmit = document.getElementById('drop-upload');
     formSubmit.addEventListener('click', () => {
       sendRequest('/uploadFile', 'POST', formData, (e, xhr) => {
-        console.log('response sent');
-
         if (xhr.status === 200) {
           alert('uploaded successfully');
           return
